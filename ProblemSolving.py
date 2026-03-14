@@ -201,3 +201,65 @@
 #         print(i*j, end = " ")
 #     print()
   
+# n = int(input("Enter the number of terms: "))
+# n1 = 0
+# n2 = 1
+# if n == 1:
+#     print(n1)
+# else:
+#     for i in range(1,n+1):
+#         print(n1, end = " ")
+#         n3 = n1 + n2
+#         n1 = n2
+#         n2 = n3
+
+# n = int(input("Enter a number: "))
+# if n < 0:
+#     print("Negative numbers are not considered prime.")
+# elif n == 0 or n == 1:
+#     print("0 and 1 are not prime numbers.")
+# else:
+#     is_prime = True
+#     for i in range(2, int(n**0.5) + 1):
+#         if n % i == 0:
+#             is_prime = False
+#             break
+#     if is_prime:
+#         print(n, "is a prime number.")  
+#     else:
+#         print(n, "is not a prime number.")
+
+# n = int(input("Enter a number: "))
+
+# rev = 0
+# temp = n
+
+# while n > 0:
+#     digit = n % 10
+#     rev = rev * 10 + digit
+#     n = n // 10
+
+# if temp == rev:
+#     print(temp, "is a palindrome.")
+# else:
+#     print(temp, "is not a palindrome.")
+
+
+# a = "OOTD.YOLO.ASAP.BRB.GTG.OTW"
+# b = a.split(".")
+# print(b)
+
+# a = input("Enter a  string: ")
+# b = sorted(a)
+# print(b)
+
+# a = "Hello"
+# b = a.replace("e","")
+# print(b)
+
+# Z = "F.R.I.E.N.D.S"
+# B = Z.replace(".", "")
+# print(B)
+
+
+
