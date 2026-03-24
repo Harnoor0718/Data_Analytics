@@ -21,10 +21,37 @@ a = {"Harnoor", "Arun", "Sahil", "Ram", "Aditi"}
 # b = a.copy()
 # print(b)
 
+
+# print(a.isdisjoint(c))
+# print(c.issubset(a))
+# print(c.issuperset(a))
+
+
 a = {"Ironman", "Hulk", "Thor", "Captain America"}
 b = {"Superman", "Batman", "Wonder-Woman"}
-c = {"Hulk", "Thor"}
+c = {"Hulk", "Thor", "SpiderMan"}
 
-print(a.isdisjoint(c))
-print(c.issubset(a))
-print(c.issuperset(a))
+# Union 
+print(a.union(b))
+
+# Difference
+print(a.difference(b))
+
+# Difference Update
+a.difference_update(c)
+print(a)
+
+# Intersection
+x  = a.intersection(c)
+print(x)
+
+a.intersection_update(c)
+print(a)
+
+y = a.symmetric_difference(c)
+print(y)
+
+
+
+
+
