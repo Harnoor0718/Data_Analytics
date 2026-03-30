@@ -22,11 +22,17 @@
 
 # Math Module
 
-import math 
-a = pow(2, 4)
-print(a)
-print(math.sqrt(16))
-print(math.pi)  
-print(math.fabs(-5))
-print(math.ceil(3.2))
-print(math.floor(3.8))
+# import math 
+# a = pow(2, 4)
+# print(a)
+# print(math.sqrt(16))
+# print(math.pi)  
+# print(math.fabs(-5))
+# print(math.ceil(3.2))
+# print(math.floor(3.8))
+
+import demo
+print(demo.add(5, 10))
+
+b = demo.employee["Name"]
+print(b)
