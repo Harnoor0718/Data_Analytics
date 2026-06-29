@@ -1,59 +1,104 @@
 import sys
 import requests
-from config import API_KEY
+import mysql.connector
+from datetime import datetime
 
-# Fix Unicode issue on Windows (for emojis)
+from config import API_KEY
+from database import connect_db
+
+# Fix Unicode issue on Windows
 sys.stdout.reconfigure(encoding="utf-8")
 
-# YouTube Video ID
 VIDEO_ID = "eHTXQW58WhA"
 
-# YouTube API Endpoint
-url = "https://www.googleapis.com/youtube/v3/commentThreads"
+URL = "https://www.googleapis.com/youtube/v3/commentThreads"
 
-# Parameters
-params = {
-    "part": "snippet",
-    "videoId": VIDEO_ID,
-    "maxResults": 10,
-    "textFormat": "plainText",
-    "key": API_KEY
-}
+conn = connect_db()
+cursor = conn.cursor()
 
-# Send GET Request
-response = requests.get(url, params=params)
+query = """
+INSERT INTO comments
+(comment_id, video_id, author, comment, likes, published_at)
+VALUES (%s, %s, %s, %s, %s, %s)
+"""
 
-# Check if request is successful
-if response.status_code == 200:
+total_inserted = 0
+page_number = 1
+next_page_token = None
+
+print("Fetching comments...\n")
+
+while True:
+
+    params = {
+        "part": "snippet",
+        "videoId": VIDEO_ID,
+        "maxResults": 100,
+        "textFormat": "plainText",
+        "key": API_KEY
+    }
+
+    if next_page_token:
+        params["pageToken"] = next_page_token
+
+    response = requests.get(URL, params=params)
+
+    if response.status_code != 200:
+        print("API Error:", response.status_code)
+        print(response.json())
+        break
 
     data = response.json()
 
-    print(f"Successfully fetched {len(data['items'])} comments.\n")
+    print(f"Page {page_number} : {len(data['items'])} comments")
 
-    # Loop through each comment
     for item in data["items"]:
 
-        # Comment details
         comment_data = item["snippet"]["topLevelComment"]["snippet"]
 
-        # Extract required information
         comment_id = item["snippet"]["topLevelComment"]["id"]
         author = comment_data["authorDisplayName"]
         comment = comment_data["textOriginal"]
         likes = comment_data["likeCount"]
-        published = comment_data["publishedAt"]
 
-        # Display
-        print("=" * 70)
-        print(f"Author      : {author}")
-        print(f"Comment ID  : {comment_id}")
-        print(f"Likes       : {likes}")
-        print(f"Published   : {published}")
-        print("\nComment:")
-        print(comment)
-        print("=" * 70)
-        print()
+        published = datetime.strptime(
+            comment_data["publishedAt"],
+            "%Y-%m-%dT%H:%M:%SZ"
+        )
 
-else:
-    print("Error:", response.status_code)
-    print(response.json())
+        values = (
+            comment_id,
+            VIDEO_ID,
+            author,
+            comment,
+            likes,
+            published
+        )
+
+        try:
+            cursor.execute(query, values)
+            total_inserted += 1
+
+        except mysql.connector.IntegrityError:
+            # Duplicate comment
+            pass
+
+    # Save current page
+    conn.commit()
+
+    # Next page
+    next_page_token = data.get("nextPageToken")
+
+    if not next_page_token:
+        break
+
+    page_number += 1
+
+# Close database
+cursor.close()
+conn.close()
+reply_count = item["snippet"]["totalReplyCount"]
+print("\n---------------------------------------")
+print(f"Total New Comments Inserted : {total_inserted}")
+print("Database connection closed.")
+print("---------------------------------------")
